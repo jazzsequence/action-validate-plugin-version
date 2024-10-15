@@ -1,0 +1,17 @@
+{
+    "name": "jazzsequence/action-validate-plugin-version",
+    "description": "A GitHub action that validates the last tested plugin version against the current version of WordPress.",
+    "type": "project",
+    "require-dev": {
+        "assertwell/shellcheck": "^1.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Chris Reynolds",
+            "email": "hello@chrisreynolds.io"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}

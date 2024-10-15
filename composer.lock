@@ -1,0 +1,54 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "d70ae42f2db391f80df771eea7bc5737",
+    "packages": [],
+    "packages-dev": [
+        {
+            "name": "assertwell/shellcheck",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/assertwell/shellcheck.git",
+                "reference": "a68b0e934a5746fcfc785bb635e72b9d98cdc939"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/assertwell/shellcheck/zipball/a68b0e934a5746fcfc785bb635e72b9d98cdc939",
+                "reference": "a68b0e934a5746fcfc785bb635e72b9d98cdc939",
+                "shasum": ""
+            },
+            "bin": [
+                "bin/shellcheck"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Steve Grunwell",
+                    "homepage": "https://stevegrunwell.com"
+                }
+            ],
+            "description": "Expose ShellCheck as a vendor binary for PHP projects",
+            "support": {
+                "issues": "https://github.com/assertwell/shellcheck/issues",
+                "source": "https://github.com/assertwell/shellcheck"
+            },
+            "time": "2022-02-09T15:45:30+00:00"
+        }
+    ],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}
