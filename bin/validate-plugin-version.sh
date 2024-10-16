@@ -3,7 +3,16 @@ set -euo pipefail
 IFS=$'\n\t'
 
 main(){
-
+	# If $PLUGIN_PATH is defined, echo it.
+	if [[ -n "${PLUGIN_PATH:-}" ]]; then
+		echo "Plugin path: $PLUGIN_PATH"
+	else
+		local PLUGIN_PATH
+		# By default, the plugin path is the root directory of the project that has this action.
+		PLUGIN_PATH=$(pwd)
+		echo "Plugin path: $PLUGIN_PATH"
+	fi
+	
     local CURRENT_WP_VERSION
     CURRENT_WP_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].current')
     echo "Current WordPress Version: ${CURRENT_WP_VERSION}"
