@@ -3,8 +3,6 @@ set -euo pipefail
 IFS=$'\n\t'
 
 main(){
-    local DIRNAME
-    DIRNAME=$(dirname "$0")
 
     local CURRENT_WP_VERSION
     CURRENT_WP_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].current')
