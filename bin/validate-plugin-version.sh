@@ -14,17 +14,15 @@ main(){
 		echo "Plugin path: $PLUGIN_PATH"
 	fi
 
-	ls -la $PLUGIN_PATH
-
 	# Check if the plugin path exists.
 	if [[ ! -d "${PLUGIN_PATH}" ]]; then
 		echo "Plugin path does not exist."
 		exit 1
 	fi
 
-    local CURRENT_WP_VERSION
-    CURRENT_WP_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].current')
-    echo "Current WordPress Version: ${CURRENT_WP_VERSION}"
+	local CURRENT_WP_VERSION
+	CURRENT_WP_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].current')
+	echo "Current WordPress Version: ${CURRENT_WP_VERSION}"
 
 	# Get "Tested up to" version from readme.txt
 	if [[ -f "${PLUGIN_PATH}/readme.txt" ]]; then
@@ -46,11 +44,21 @@ main(){
 	if [[ $COMPARE_VERSIONS -eq -1 ]]; then
 	echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
 	echo "Updating readme.txt with new Tested up to version."
-	sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/readme.txt
+	
+	# Check if the script is running on macOS or Linux, and use the appropriate sed syntax
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/readme.txt
+	else
+		sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/readme.txt
+	fi
 
 	# Update README.md if it exists
 	if [[ -f "${PLUGIN_PATH}/README.md" ]]; then
-		sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/README.md
+		if [[ "$OSTYPE" == "darwin"* ]]; then
+			sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/README.md
+		else
+			sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/README.md
+		fi
 		echo "README.md updated with new Tested up to version."
 	fi
 
@@ -71,7 +79,7 @@ main(){
 	git config user.name "github-actions"
 	git config user.email "github-actions@github.com"
 	git checkout -b "$BRANCH_NAME"
-	git add readme.txt README.md || true
+	git add ${PLUGIN_PATH}/readme.txt ${PLUGIN_PATH}/README.md || true
 	git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
 	git push origin "$BRANCH_NAME"
 
