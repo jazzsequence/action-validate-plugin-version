@@ -1,0 +1,11 @@
+name: Validate Plugin Version Test
+on: [push]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Plugin Version
+        run: |
+          # Run action on test plugin in .github/workflows/fixtures/.
+          echo "TODO!"
