@@ -5,11 +5,12 @@ IFS=$'\n\t'
 main(){
 	# If $PLUGIN_PATH is defined, echo it.
 	if [[ -n "${PLUGIN_PATH:-}" ]]; then
+		PLUGIN_PATH=${WORKFLOW_PATH}/${PLUGIN_PATH}
 		echo "Plugin path: $PLUGIN_PATH"
 	else
 		local PLUGIN_PATH
 		# By default, the plugin path is the root directory of the project that has this action.
-		PLUGIN_PATH=$(pwd)
+		PLUGIN_PATH=$WORKFLOW_PATH
 		echo "Plugin path: $PLUGIN_PATH"
 	fi
 
