@@ -9,3 +9,4 @@ jobs:
         uses: ./
         with:
             plugin-path: '.github/workflows/fixtures/plugin-test/'
+            dry-run: true

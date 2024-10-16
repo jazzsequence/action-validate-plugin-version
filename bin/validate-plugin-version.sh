@@ -62,6 +62,12 @@ main(){
 		exit 1
 	fi
 
+	# Bail before committing anything if we're dry-running.
+	if [[ "${DRY_RUN}" == "true" ]]; then
+		echo "Dry run enabled. Happy testing."
+		exit 0
+	fi
+
 	git config user.name "github-actions"
 	git config user.email "github-actions@github.com"
 	git checkout -b "$BRANCH_NAME"
