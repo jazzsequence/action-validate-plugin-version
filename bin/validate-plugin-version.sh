@@ -12,13 +12,13 @@ main(){
 		PLUGIN_PATH=$(pwd)
 		echo "Plugin path: $PLUGIN_PATH"
 	fi
-	
+
     local CURRENT_WP_VERSION
     CURRENT_WP_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].current')
     echo "Current WordPress Version: ${CURRENT_WP_VERSION}"
 
 	# Get "Tested up to" version from readme.txt
-	if [[ -f "readme.txt" ]]; then
+	if [[ -f "${PLUGIN_PATH}/readme.txt" ]]; then
 		TESTED_UP_TO=$(grep -i "Tested up to:" readme.txt | tr -d '\r\n' | awk -F ': ' '{ print $2 }')
 	else
 		echo "readme.txt not found."
@@ -40,7 +40,7 @@ main(){
 	sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" readme.txt
 
 	# Update README.md if it exists
-	if [[ -f "README.md" ]]; then
+	if [[ -f "${PLUGIN_PATH}/README.md" ]]; then
 		sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" README.md
 		echo "README.md updated with new Tested up to version."
 	fi
