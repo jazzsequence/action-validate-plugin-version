@@ -14,6 +14,14 @@ main(){
 		echo "Plugin path: $PLUGIN_PATH"
 	fi
 
+	ls -la $PLUGIN_PATH
+
+	# Check if the plugin path exists.
+	if [[ ! -d "${PLUGIN_PATH}" ]]; then
+		echo "Plugin path does not exist."
+		exit 1
+	fi
+
     local CURRENT_WP_VERSION
     CURRENT_WP_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].current')
     echo "Current WordPress Version: ${CURRENT_WP_VERSION}"
