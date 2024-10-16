@@ -26,7 +26,7 @@ main(){
 
 	# Get "Tested up to" version from readme.txt
 	if [[ -f "${PLUGIN_PATH}/readme.txt" ]]; then
-		TESTED_UP_TO=$(grep -i "Tested up to:" ${PLUGIN_PATH}/readme.txt | tr -d '\r\n' | awk -F ': ' '{ print $2 }')
+		TESTED_UP_TO=$(grep -i "Tested up to:" "${PLUGIN_PATH}/readme.txt" | tr -d '\r\n' | awk -F ': ' '{ print $2 }')
 	else
 		echo "readme.txt not found."
 		exit 1
@@ -47,17 +47,17 @@ main(){
 	
 	# Check if the script is running on macOS or Linux, and use the appropriate sed syntax
 	if [[ "$OSTYPE" == "darwin"* ]]; then
-		sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/readme.txt
+		sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/readme.txt"
 	else
-		sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/readme.txt
+		sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/readme.txt"
 	fi
 
 	# Update README.md if it exists
 	if [[ -f "${PLUGIN_PATH}/README.md" ]]; then
 		if [[ "$OSTYPE" == "darwin"* ]]; then
-			sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/README.md
+			sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
 		else
-			sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/README.md
+			sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
 		fi
 		echo "README.md updated with new Tested up to version."
 	fi
@@ -79,7 +79,7 @@ main(){
 	git config user.name "github-actions"
 	git config user.email "github-actions@github.com"
 	git checkout -b "$BRANCH_NAME"
-	git add ${PLUGIN_PATH}/readme.txt ${PLUGIN_PATH}/README.md || true
+	git add "${PLUGIN_PATH}/readme.txt" "${PLUGIN_PATH}/README.md" || true
 	git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
 	git push origin "$BRANCH_NAME"
 
