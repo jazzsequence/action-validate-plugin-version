@@ -6,9 +6,13 @@ branding:
   color: orange
 inputs:
   plugin-path:
-    description: 'The path to the plugin to validate.'
+    description: The path to the plugin to validate.
     required: false
     default: '.'
+  dry-run:
+    description: Whether to actually commit the changes to the repository.
+    required: false
+    default: false
 runs:
   using: composite
   steps:
