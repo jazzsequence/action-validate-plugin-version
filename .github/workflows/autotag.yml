@@ -21,6 +21,6 @@ jobs:
             plugin-path: '.github/workflows/fixtures/plugin-test/'
             dry-run: true		  
       - name: Tag & Release
-        uses: pantheon-systems/autotag@v0
+        uses: pantheon-systems/action-autotag@v0
         with:
           gh-token: ${{ github.token }}
