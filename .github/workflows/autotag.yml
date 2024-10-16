@@ -12,6 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Lint
+        run: shellcheck bin/*.sh
+      - name: Validate Plugin Version
+        uses: ./
+        with:
+            plugin-path: '.github/workflows/fixtures/plugin-test/'
+            dry-run: true		  
       - name: Tag & Release
         uses: pantheon-systems/autotag@v0
         with:
