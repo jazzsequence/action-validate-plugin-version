@@ -16,6 +16,7 @@ runs:
     - name: Validate Plugin Tested Up To Version
       env:
         PLUGIN_PATH: ${{ inputs.plugin-path }}
+      shell: bash
       run: bash bin/validate-plugin-version.sh ${{ inputs.plugin-path }}
     - name: Create Pull Request
       if: # something here
