@@ -28,7 +28,7 @@ main(){
 
 	# Get "Tested up to" version from readme.txt
 	if [[ -f "${PLUGIN_PATH}/readme.txt" ]]; then
-		TESTED_UP_TO=$(grep -i "Tested up to:" readme.txt | tr -d '\r\n' | awk -F ': ' '{ print $2 }')
+		TESTED_UP_TO=$(grep -i "Tested up to:" ${PLUGIN_PATH}/readme.txt | tr -d '\r\n' | awk -F ': ' '{ print $2 }')
 	else
 		echo "readme.txt not found."
 		exit 1
@@ -46,11 +46,11 @@ main(){
 	if [[ $COMPARE_VERSIONS -eq -1 ]]; then
 	echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
 	echo "Updating readme.txt with new Tested up to version."
-	sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" readme.txt
+	sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/readme.txt
 
 	# Update README.md if it exists
 	if [[ -f "${PLUGIN_PATH}/README.md" ]]; then
-		sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" README.md
+		sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" ${PLUGIN_PATH}/README.md
 		echo "README.md updated with new Tested up to version."
 	fi
 
