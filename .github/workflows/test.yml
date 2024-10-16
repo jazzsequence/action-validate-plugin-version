@@ -6,6 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate Plugin Version
-        run: |
-          # Run action on test plugin in .github/workflows/fixtures/.
-          echo "TODO!"
+        uses: ./
+        with:
+            plugin-path: '.github/workflows/fixtures/plugin-test/'
