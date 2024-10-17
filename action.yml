@@ -28,8 +28,5 @@ runs:
         DRY_RUN: ${{ inputs.dry-run }}
         WORKFLOW_PATH: ${{ github.workspace }}
         GH_TOKEN: ${{ inputs.gh-token }}
-      run: bash bin/validate-plugin-version.sh ${{ inputs.plugin-path }}
-    # - name: Create Pull Request
-      # if: # something here
-      # Create a pull request with the changes made from running the script.
+      run: bash bin/validate-plugin-version.sh
     
