@@ -13,6 +13,10 @@ inputs:
     description: Whether to actually commit the changes to the repository.
     required: false
     default: false
+  gh-token:
+    description: The GitHub token to use for creating a pull request.
+    required: false
+    default: ${{ github.token }}
 runs:
   using: composite
   steps:
@@ -23,6 +27,7 @@ runs:
         PLUGIN_PATH: ${{ inputs.plugin-path }}
         DRY_RUN: ${{ inputs.dry-run }}
         WORKFLOW_PATH: ${{ github.workspace }}
+        GH_TOKEN: ${{ inputs.gh-token }}
       run: bash bin/validate-plugin-version.sh ${{ inputs.plugin-path }}
     # - name: Create Pull Request
       # if: # something here
