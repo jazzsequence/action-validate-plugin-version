@@ -21,6 +21,12 @@ runs:
   using: composite
   steps:
     - uses: actions/checkout@v4
+    - name: Debug Action Environment
+      run: |
+        echo "Current working directory:"
+        pwd
+        echo "Contents of action directory (looking for bin/validate-plugin-version.sh):"
+        ls -R    
     - name: Validate Plugin Tested Up To Version
       shell: bash
       env:
