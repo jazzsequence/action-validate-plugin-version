@@ -36,12 +36,12 @@ main(){
 		echo "Tested up to version not found in readme.txt."
 		exit 1
 	fi
-
-	# Compare versions using PHP
-	COMPARE_VERSIONS=$(php -r "echo version_compare('$TESTED_UP_TO', '$CURRENT_WP_VERSION');")
-	echo "Comparison result: $COMPARE_VERSIONS"
 	
-	if [[ $COMPARE_VERSIONS -eq -1 ]]; then
+	# Compare versions using PHP
+	if php -r "exit(version_compare('$TESTED_UP_TO', '$CURRENT_WP_VERSION', '>=') ? 0 : 1);"; then
+		echo "Tested up to version matches or is greater than the current WordPress version. Check passed."
+		exit
+	fi
 	echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
 	echo "Updating readme.txt with new Tested up to version."
 	
@@ -84,9 +84,6 @@ main(){
 	git push origin "$BRANCH_NAME"
 
 	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in readme.txt (and README.md if applicable) to match the current WordPress version $CURRENT_WP_VERSION."
-	else
-	echo "Tested up to version matches or is greater than the current WordPress version. Check passed."
-	fi
 }
 
 main
