@@ -1,2 +1,35 @@
-# action-validate-plugin-version
+# Validate WordPress Plugin "Tested Up To" Version
+[![GitHub License](https://img.shields.io/github/license/jazzsequence/action-validate-plugin-version)](https://github.com/jazzsequence/action-validate-plugin-version/blob/main/LICENSE)
+[![Validate Plugin Version Test](https://github.com/jazzsequence/action-validate-plugin-version/actions/workflows/test.yml/badge.svg)](https://github.com/jazzsequence/action-validate-plugin-version/actions/workflows/test.yml)
+
 A GitHub action that validates the last tested plugin version against the current version of WordPress.
+
+## Usage
+
+```yaml
+name: Validate Plugin Version
+on:
+  push:
+	branches:
+	  - main
+jobs:
+  validate:
+	runs-on: ubuntu-latest
+	steps:
+	  - uses: actions/checkout@v2
+	  - name: Validate Plugin Version
+		uses: jazzsequence/action-validate-plugin-version@v0
+		with:
+		  plugin-path: 'path/to/plugin-slug/'
+```
+
+### Inputs
+
+#### `plugin-path`
+The path to the plugin directory to validate. If not specified, the action will use the project root.
+
+#### `dry-run`
+Only used in self-testing. If passed, this will not actually create a PR against the repository.
+
+#### `gh-token`
+The GitHub token to use for creating a PR. If not specified, the action will use the default GitHub token.
