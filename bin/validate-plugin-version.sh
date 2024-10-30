@@ -55,30 +55,22 @@ main() {
 	# Update README.md if it exists
 	if [[ -f "${PLUGIN_PATH}/README.md" ]]; then
 		if [[ "$OSTYPE" == "darwin"* ]]; then
-			sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/readme.txt"
+			sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
 		else
-			sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/readme.txt"
+			sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
 		fi
+		echo "README.md updated with new Tested up to version."
+	fi
 
-		# Update README.md if it exists
-		if [[ -f "${PLUGIN_PATH}/README.md" ]]; then
-			if [[ "$OSTYPE" == "darwin"* ]]; then
-				sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
-			else
-				sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
-			fi
-			echo "README.md updated with new Tested up to version."
-		fi
+	# Create a pull request with a dynamic branch name
+	BRANCH_PREFIX="update-tested-up-to-version-"
+	BRANCH_NAME="$BRANCH_PREFIX$(date +%Y%m%d%H%M%S)"
 
-		# Create a pull request with a dynamic branch name
-		BRANCH_PREFIX="update-tested-up-to-version-"
-		BRANCH_NAME="$BRANCH_PREFIX$(date +%Y%m%d%H%M%S)"
-
-		echo "Checking if a branch with prefix $BRANCH_PREFIX already exists."
-		if git ls-remote --heads origin | grep -q "$BRANCH_PREFIX"; then
-			echo "A branch with prefix $BRANCH_PREFIX already exists. Exiting."
-			exit 1
-		fi
+	echo "Checking if a branch with prefix $BRANCH_PREFIX already exists."
+	if git ls-remote --heads origin | grep -q "$BRANCH_PREFIX"; then
+		echo "A branch with prefix $BRANCH_PREFIX already exists. Exiting."
+		exit 1
+	fi
 
 	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in readme.txt (and README.md if applicable) to match the current WordPress version $CURRENT_WP_VERSION."
 }
