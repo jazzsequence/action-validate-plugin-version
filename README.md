@@ -44,3 +44,7 @@ A comma-separated list of filenames to check for the "Tested Up To" version. If 
 
 #### `branch`
 The branch to create the PR against. If not specified, the action will use the `main` branch.
+
+## Permissions
+
+The `write` permissions on `contents` and `pull-requests` are important. They are required for the action to commit the changes back to the repository and open a pull request. The only files affected by the action are files named `readme.txt`, `README.md` or those files matching the pattern (looking for "Tested Up To" in the file) that have been specified in the `filenames` input. 
