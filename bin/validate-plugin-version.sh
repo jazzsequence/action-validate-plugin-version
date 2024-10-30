@@ -47,7 +47,7 @@ main() {
 	
 	# Compare versions using PHP
 	if php -r "exit(version_compare('$TESTED_UP_TO', '$CURRENT_WP_VERSION', '>=') ? 0 : 1);"; then
-		echo "Tested up to version matches or is greater than the current WordPress version. Nothing to do here."
+		echo "Tested up to version matches or is greater than the current WordPress version. Check passed."
 		exit
 	fi
 	echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
@@ -61,9 +61,9 @@ main() {
 		if [[ -f "$full_path" ]]; then
 			echo "Updating 'Tested up to' version in $full_path"
 			if [[ "$OSTYPE" == "darwin"* ]]; then
-				sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "$full_path"
+				sed -i '' -E "s/(Tested up to: )([0-9.]+)([[:space:]]*)/\1$CURRENT_WP_VERSION\3/" "$full_path"
 			else
-				sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "$full_path"
+				sed -i -E "s/(Tested up to: )([0-9.]+)([[:space:]]*)/\1$CURRENT_WP_VERSION\3/" "$full_path"
 			fi
 		fi
 	done
