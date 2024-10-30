@@ -21,6 +21,10 @@ inputs:
     description: The filenames to check for the tested up to version. Default is 'readme.txt,README.md'.
     required: false
     default: 'readme.txt,README.md'
+  branch:
+    description: The branch to use as the base for PRs and commit the changes back to.
+    required: false
+    default: 'main'
 runs:
   using: composite
   steps:
@@ -40,5 +44,6 @@ runs:
         WORKFLOW_PATH: ${{ github.workspace }}
         GH_TOKEN: ${{ inputs.gh-token }}
         FILENAMES: ${{ inputs.filenames }}
+        BRANCH: ${{ inputs.branch }}
       run: bash ${{ github.action_path }}/bin/validate-plugin-version.sh
     
