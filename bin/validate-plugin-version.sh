@@ -53,9 +53,6 @@ main() {
 	echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
 	echo "Updating files with new Tested up to version."
 
-	echo "Checkout out the ${BRANCH} branch."
-	git checkout "${BRANCH}"
-
 	# Update each specified filename if it exists
 	for filename in "${FILENAMES_ARRAY[@]}"; do
 		trimmed_filename=$(echo "$filename" | xargs) # Trim whitespace
@@ -81,10 +78,10 @@ main() {
 		exit 0
 	fi
 
-	echo "Creating a new branch $BRANCH_NAME and pushing changes."
+	echo "Creating a new branch ${BRANCH_NAME} off of ${BRANCH} and pushing changes."
 	git config user.name "github-actions"
 	git config user.email "github-actions@github.com"
-	git checkout -b "$BRANCH_NAME"
+	git checkout -b "$BRANCH_NAME" "$BRANCH"
 
 	# Add updated files to git
 	for filename in "${FILENAMES_ARRAY[@]}"; do
