@@ -10,17 +10,17 @@ A GitHub action that validates the last tested plugin version against the curren
 name: Validate Plugin Version
 on:
   push:
-	branches:
-	  - main
+    branches:
+      - main
 jobs:
   validate:
-	runs-on: ubuntu-latest
-	steps:
-	  - uses: actions/checkout@v2
-	  - name: Validate Plugin Version
-		uses: jazzsequence/action-validate-plugin-version@v0
-		with:
-		  plugin-path: 'path/to/plugin-slug/'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Validate Plugin Version
+        uses: jazzsequence/action-validate-plugin-version@v0
+        with:
+          plugin-path: 'path/to/plugin-slug/'
 ```
 
 ### Inputs
