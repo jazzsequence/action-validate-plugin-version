@@ -17,6 +17,10 @@ inputs:
     description: The GitHub token to use for creating a pull request.
     required: false
     default: ${{ github.token }}
+  filenames:
+    description: The filenames to check for the tested up to version. Default is 'readme.txt,README.md'.
+    required: false
+    default: 'readme.txt,README.md'
 runs:
   using: composite
   steps:
@@ -35,5 +39,6 @@ runs:
         DRY_RUN: ${{ inputs.dry-run }}
         WORKFLOW_PATH: ${{ github.workspace }}
         GH_TOKEN: ${{ inputs.gh-token }}
+        FILENAMES: ${{ inputs.filenames }}
       run: bash ${{ github.action_path }}/bin/validate-plugin-version.sh
     

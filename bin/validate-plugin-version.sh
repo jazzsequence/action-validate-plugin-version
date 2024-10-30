@@ -24,43 +24,49 @@ main() {
 	CURRENT_WP_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].current')
 	echo "Current WordPress Version: ${CURRENT_WP_VERSION}"
 
-	# Get "Tested up to" version from readme.txt
-	if [[ -f "${PLUGIN_PATH}/readme.txt" ]]; then
-		TESTED_UP_TO=$(grep -i "Tested up to:" "${PLUGIN_PATH}/readme.txt" | tr -d '\r\n' | awk -F ': ' '{ print $2 }')
-	else
-		echo "readme.txt not found."
-		exit 1
-	fi
+	# Split FILENAMES into an array
+	IFS=',' read -ra FILENAMES_ARRAY <<< "$FILENAMES"
+
+	local TESTED_UP_TO=""
+	for filename in "${FILENAMES_ARRAY[@]}"; do
+		trimmed_filename=$(echo "$filename" | xargs) # Trim whitespace
+		full_path="${PLUGIN_PATH}/${trimmed_filename}"
+
+		# Get "Tested up to" version if file exists
+		if [[ -f "$full_path" ]]; then
+			TESTED_UP_TO=$(grep -i "Tested up to:" "$full_path" | tr -d '\r\n' | awk -F ': ' '{ print $2 }')
+			echo "Found 'Tested up to' version in $trimmed_filename: $TESTED_UP_TO"
+			break
+		fi
+	done
 
 	if [[ -z "$TESTED_UP_TO" ]]; then
-		echo "Tested up to version not found in readme.txt."
+		echo "'Tested up to' version not found in any of the specified files: ${FILENAMES_ARRAY[*]}"
 		exit 1
 	fi
 	
 	# Compare versions using PHP
 	if php -r "exit(version_compare('$TESTED_UP_TO', '$CURRENT_WP_VERSION', '>=') ? 0 : 1);"; then
-		echo "Tested up to version matches or is greater than the current WordPress version. Check passed."
+		echo "Tested up to version matches or is greater than the current WordPress version. Nothing to do here."
 		exit
 	fi
 	echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
-	echo "Updating readme.txt with new Tested up to version."
-	
-	# Check if the script is running on macOS or Linux, and use the appropriate sed syntax
-	if [[ "$OSTYPE" == "darwin"* ]]; then
-		sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/readme.txt"
-	else
-		sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/readme.txt"
-	fi
+	echo "Updating files with new Tested up to version."
 
-	# Update README.md if it exists
-	if [[ -f "${PLUGIN_PATH}/README.md" ]]; then
-		if [[ "$OSTYPE" == "darwin"* ]]; then
-			sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
-		else
-			sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
+	# Update each specified filename if it exists
+	for filename in "${FILENAMES_ARRAY[@]}"; do
+		trimmed_filename=$(echo "$filename" | xargs) # Trim whitespace
+		full_path="${PLUGIN_PATH}/${trimmed_filename}"
+
+		if [[ -f "$full_path" ]]; then
+			echo "Updating 'Tested up to' version in $full_path"
+			if [[ "$OSTYPE" == "darwin"* ]]; then
+				sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "$full_path"
+			else
+				sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "$full_path"
+			fi
 		fi
-		echo "README.md updated with new Tested up to version."
-	fi
+	done
 
 	# Create a pull request with a dynamic branch name
 	BRANCH_PREFIX="update-tested-up-to-version-"
@@ -76,7 +82,15 @@ main() {
 	git config user.name "github-actions"
 	git config user.email "github-actions@github.com"
 	git checkout -b "$BRANCH_NAME"
-	git add "${PLUGIN_PATH}"/{readme,README}.* || true
+
+	# Add updated files to git
+	for filename in "${FILENAMES_ARRAY[@]}"; do
+		trimmed_filename=$(echo "$filename" | xargs) # Trim whitespace
+		full_path="${PLUGIN_PATH}/${trimmed_filename}"
+		if [[ -f "$full_path" ]]; then
+			git add "$full_path"
+		fi
+	done
 
 	# Bail before committing anything if we're dry-running.
 	if [[ "${DRY_RUN}" == "true" ]]; then
@@ -84,6 +98,7 @@ main() {
 		exit 0
 	fi
 
+	# Check if there are any staged changes
 	if [[ -z $(git status --porcelain) ]]; then
 		echo "No changes to commit. Exiting."
 		exit 1
@@ -93,7 +108,7 @@ main() {
 	git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
 	git push origin "$BRANCH_NAME"
 
-	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in readme.txt (and README.md if applicable) to match the current WordPress version $CURRENT_WP_VERSION."
+	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION."
 }
 
 main
