@@ -78,6 +78,10 @@ main() {
 		exit 0
 	fi
 
+	if [[ "${DRY_RUN}" == "true" ]]; then
+		BRANCH=$GITHUB_REF
+	fi
+
 	echo "Creating a new branch ${BRANCH_NAME} off of ${BRANCH} and pushing changes."
 	git config user.name "github-actions"
 	git config user.email "github-actions@github.com"
