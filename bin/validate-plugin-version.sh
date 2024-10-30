@@ -84,6 +84,11 @@ main() {
 		exit 0
 	fi
 
+	if [[ -z $(git status --porcelain) ]]; then
+		echo "No changes to commit. Exiting."
+		exit 1
+	fi
+
 	echo "Committing changes and pushing to the repository."
 	git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
 	git push origin "$BRANCH_NAME"
