@@ -53,6 +53,9 @@ main() {
 	echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
 	echo "Updating files with new Tested up to version."
 
+	echo "Checkout out the ${BRANCH} branch."
+	git checkout "${BRANCH}"
+
 	# Update each specified filename if it exists
 	for filename in "${FILENAMES_ARRAY[@]}"; do
 		trimmed_filename=$(echo "$filename" | xargs) # Trim whitespace
