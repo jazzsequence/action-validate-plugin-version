@@ -64,7 +64,6 @@ main() {
 
 	# Create a pull request with a dynamic branch name
 	BRANCH_PREFIX="update-tested-up-to-version-"
-	BRANCH_NAME="$BRANCH_PREFIX$(date +%Y%m%d%H%M%S)"
 
 	echo "Checking if a branch with prefix $BRANCH_PREFIX already exists."
 	if git ls-remote --heads origin | grep -q "$BRANCH_PREFIX"; then
