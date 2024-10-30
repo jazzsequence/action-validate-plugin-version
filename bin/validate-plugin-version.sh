@@ -69,7 +69,7 @@ main() {
 	echo "Checking if a branch with prefix $BRANCH_PREFIX already exists."
 	if git ls-remote --heads origin | grep -q "$BRANCH_PREFIX"; then
 		echo "A branch with prefix $BRANCH_PREFIX already exists. Exiting."
-		exit 1
+		exit 0
 	fi
 
 	echo "Creating a new branch $BRANCH_NAME and pushing changes."
