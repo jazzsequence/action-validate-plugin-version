@@ -36,16 +36,24 @@ main() {
 		echo "Tested up to version not found in readme.txt."
 		exit 1
 	fi
-
-	# Compare versions using PHP
-	COMPARE_VERSIONS=$(php -r "echo version_compare('$TESTED_UP_TO', '$CURRENT_WP_VERSION');")
-	echo "Comparison result: $COMPARE_VERSIONS"
 	
-	if [[ $COMPARE_VERSIONS -eq -1 ]]; then
-		echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
-		echo "Updating readme.txt with new Tested up to version."
-		
-		# Check if the script is running on macOS or Linux, and use the appropriate sed syntax
+	# Compare versions using PHP
+	if php -r "exit(version_compare('$TESTED_UP_TO', '$CURRENT_WP_VERSION', '>=') ? 0 : 1);"; then
+		echo "Tested up to version matches or is greater than the current WordPress version. Check passed."
+		exit
+	fi
+	echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
+	echo "Updating readme.txt with new Tested up to version."
+	
+	# Check if the script is running on macOS or Linux, and use the appropriate sed syntax
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/readme.txt"
+	else
+		sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/readme.txt"
+	fi
+
+	# Update README.md if it exists
+	if [[ -f "${PLUGIN_PATH}/README.md" ]]; then
 		if [[ "$OSTYPE" == "darwin"* ]]; then
 			sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/readme.txt"
 		else
@@ -72,26 +80,7 @@ main() {
 			exit 1
 		fi
 
-		echo "Creating a new branch $BRANCH_NAME and pushing changes."
-		git config user.name "github-actions"
-		git config user.email "github-actions@github.com"
-		git checkout -b "$BRANCH_NAME"
-		git add "${PLUGIN_PATH}/readme.txt" "${PLUGIN_PATH}/README.md" || true
-
-		# Bail before committing anything if we're dry-running.
-		if [[ "${DRY_RUN}" == "true" ]]; then
-			echo "Dry run enabled. Happy testing."
-			exit 0
-		fi
-
-		echo "Committing changes and pushing to the repository."
-		git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
-		git push origin "$BRANCH_NAME"
-
-		gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in readme.txt (and README.md if applicable) to match the current WordPress version $CURRENT_WP_VERSION."
-	else
-		echo "Tested up to version matches or is greater than the current WordPress version. Check passed."
-	fi
+	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in readme.txt (and README.md if applicable) to match the current WordPress version $CURRENT_WP_VERSION."
 }
 
 main
