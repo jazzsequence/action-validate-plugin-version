@@ -76,12 +76,17 @@ main() {
 	git config user.name "github-actions"
 	git config user.email "github-actions@github.com"
 	git checkout -b "$BRANCH_NAME"
-	git add "${PLUGIN_PATH}/readme.txt" "${PLUGIN_PATH}/README.md" || true
+	git add "${PLUGIN_PATH}/"{readme,README}.* || true
 
 	# Bail before committing anything if we're dry-running.
 	if [[ "${DRY_RUN}" == "true" ]]; then
 		echo "Dry run enabled. Happy testing."
 		exit 0
+	fi
+
+	if [[ -z $(git status --porcelain) ]]; then
+		echo "No changes to commit. Exiting."
+		exit 1
 	fi
 
 	echo "Committing changes and pushing to the repository."
