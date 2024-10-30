@@ -21,6 +21,8 @@ jobs:
         uses: jazzsequence/action-validate-plugin-version@v0
         with:
           plugin-path: 'path/to/plugin-slug/'
+          filenames: 'readme.txt,README.MD'
+          branch: 'main'
 ```
 
 ### Inputs
@@ -36,3 +38,6 @@ The GitHub token to use for creating a PR. If not specified, the action will use
 
 #### `filenames`
 A comma-separated list of filenames to check for the "Tested Up To" version. If not specified, the action will use `readme.txt` and `README.md`.
+
+#### `branch`
+The branch to create the PR against. If not specified, the action will use the `main` branch.
