@@ -33,3 +33,6 @@ Only used in self-testing. If passed, this will not actually create a PR against
 
 #### `gh-token`
 The GitHub token to use for creating a PR. If not specified, the action will use the default GitHub token.
+
+#### `filenames`
+A comma-separated list of filenames to check for the "Tested Up To" version. If not specified, the action will use `readme.txt` and `README.md`.
