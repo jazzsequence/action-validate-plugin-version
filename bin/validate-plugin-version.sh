@@ -76,7 +76,7 @@ main() {
 	git config user.name "github-actions"
 	git config user.email "github-actions@github.com"
 	git checkout -b "$BRANCH_NAME"
-	git add "${PLUGIN_PATH}/"{readme,README}.* || true
+	git add "${PLUGIN_PATH}"/{readme,README}.* || true
 
 	# Bail before committing anything if we're dry-running.
 	if [[ "${DRY_RUN}" == "true" ]]; then
