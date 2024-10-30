@@ -9,9 +9,12 @@ A GitHub action that validates the last tested plugin version against the curren
 ```yaml
 name: Validate Plugin Version
 on:
-  push:
-    branches:
-      - main
+  schedule:
+	- cron: '0 0 * * 0'
+permissions:
+  contents: write
+  pull-requests: write
+  
 jobs:
   validate:
     runs-on: ubuntu-latest
