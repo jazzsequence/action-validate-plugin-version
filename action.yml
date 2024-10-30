@@ -35,5 +35,5 @@ runs:
         DRY_RUN: ${{ inputs.dry-run }}
         WORKFLOW_PATH: ${{ github.workspace }}
         GH_TOKEN: ${{ inputs.gh-token }}
-      run: bash bin/validate-plugin-version.sh
+      run: bash "${{ runner.temp }}/_actions/jazzsequence/action-validate-plugin-version@v0/bin/validate-plugin-version.sh"
     
