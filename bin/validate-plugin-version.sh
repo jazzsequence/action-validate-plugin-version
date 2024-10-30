@@ -53,11 +53,11 @@ main() {
 	fi
 
 	# Update README.md if it exists
-	if [[ -f "${PLUGIN_PATH}/README.md" || -f "${PLUGIN_PATH}/README.MD" ]]; then
+	if [[ -f "${PLUGIN_PATH}/README.md" ]]; then
 		if [[ "$OSTYPE" == "darwin"* ]]; then
-			sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}"/README.{md,MD}
+			sed -i '' -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
 		else
-			sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}"/README.{md,MD}
+			sed -i -E "s/(Tested up to: ).*/\1$CURRENT_WP_VERSION/" "${PLUGIN_PATH}/README.md"
 		fi
 		echo "README.md updated with new Tested up to version."
 	fi
