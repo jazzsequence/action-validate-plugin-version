@@ -78,14 +78,10 @@ main() {
 		exit 0
 	fi
 
-	if [[ "${DRY_RUN}" == "true" ]]; then
-		BRANCH=$GITHUB_REF
-	fi
-
-	echo "Creating a new branch ${BRANCH_NAME} off of ${BRANCH} and pushing changes."
+	echo "Creating a new branch $BRANCH_NAME and pushing changes."
 	git config user.name "github-actions"
 	git config user.email "github-actions@github.com"
-	git checkout -b "$BRANCH_NAME" "$BRANCH"
+	git checkout -b "$BRANCH_NAME"
 
 	# Add updated files to git
 	for filename in "${FILENAMES_ARRAY[@]}"; do
@@ -112,7 +108,7 @@ main() {
 	git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
 	git push origin "$BRANCH_NAME"
 
-	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION."
+	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION." --base $BRANCH
 }
 
 main
