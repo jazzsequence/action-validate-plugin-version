@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Validate Plugin Version
-        uses: jazzsequence/action-validate-plugin-version@v0
+        uses: jazzsequence/action-validate-plugin-version@v1
         with:
           plugin-path: 'path/to/plugin-slug/'
           filenames: 'readme.txt,README.MD'
