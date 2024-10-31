@@ -10,7 +10,7 @@ A GitHub action that validates the last tested plugin version against the curren
 name: Validate Plugin Version
 on:
   schedule:
-	- cron: '0 0 * * 0'
+    - cron: '0 0 * * 0'
 permissions:
   contents: write
   pull-requests: write
