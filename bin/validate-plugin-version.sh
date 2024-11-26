@@ -11,11 +11,17 @@ main() {
 	if [[ -n "${BRANCH:-}" && "$(git rev-parse --abbrev-ref HEAD)" != "$BRANCH" ]]; then
 		echo "Checking if branch $BRANCH exists."
 		if ! git show-ref --verify --quiet "refs/heads/$BRANCH"; then
-			echo "Error: Branch '$BRANCH' does not exist."
-			exit 1
+			if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+				echo "Branch '$BRANCH' exists on remote. Checking out from remote."
+				git checkout -b "$BRANCH" "origin/$BRANCH"
+			else
+				echo "Error: Branch '$BRANCH' does not exist."
+				exit 1
+			fi
+		else
+			echo "Checking out branch $BRANCH"
+			git checkout "$BRANCH"
 		fi
-		echo "Checking out branch $BRANCH"
-		git checkout "$BRANCH"
 	fi
 
 	# If $PLUGIN_PATH is defined, echo it.
