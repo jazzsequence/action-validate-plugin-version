@@ -32,7 +32,7 @@ jobs:
 
 ### Configuration
 
-Your `actions/checkout` action should include `fetch-depth`. `fetch-depth: 0` ensures that all branches are pulled which is _necessary_ for ensuring that the _correct branch_ is used to create the pull request against.
+Your `actions/checkout` action **must include** `fetch-depth`. `fetch-depth: 0` ensures that all branches are pulled which is _necessary_ for ensuring that the _correct branch_ is used to create the pull request against.
 
 ### Inputs
 
