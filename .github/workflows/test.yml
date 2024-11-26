@@ -10,6 +10,8 @@ jobs:
       - name: Print current branch
         run: |
           echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+          echo "All branches:"
+          git branch -a
       - name: Validate Plugin Version
         uses: ./
         with:
