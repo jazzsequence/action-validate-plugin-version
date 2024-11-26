@@ -3,9 +3,30 @@ set -euo pipefail
 IFS=$'\n\t'
 
 main() {
+	# Determine the default branch
+	DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
+	echo "Default branch is $DEFAULT_BRANCH"
+
+	# Check out the specified branch if $BRANCH is set and not already on it
+	if [[ -n "${BRANCH:-}" && "$(git rev-parse --abbrev-ref HEAD)" != "$BRANCH" ]]; then
+		echo "Checking if branch $BRANCH exists."
+		if ! git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+			if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+				echo "Branch '$BRANCH' exists on remote. Checking out from remote."
+				git checkout -b "$BRANCH" "origin/$BRANCH"
+			else
+				echo "Error: Branch '$BRANCH' does not exist."
+				exit 1
+			fi
+		else
+			echo "Checking out branch $BRANCH"
+			git checkout "$BRANCH"
+		fi
+	fi
+
 	# If $PLUGIN_PATH is defined, echo it.
 	if [[ -n "${PLUGIN_PATH:-}" ]]; then
-		PLUGIN_PATH=${WORKFLOW_PATH}/${PLUGIN_PATH}
+		 PLUGIN_PATH=${WORKFLOW_PATH}/${PLUGIN_PATH}
 		echo "Plugin path: $PLUGIN_PATH"
 	else
 		local PLUGIN_PATH
@@ -89,6 +110,11 @@ main() {
 		full_path="${PLUGIN_PATH}/${trimmed_filename}"
 		if [[ -f "$full_path" ]]; then
 			git add "$full_path"
+			# If we're dry-running, output the contents of the changed files.
+			if [[ "${DRY_RUN}" == "true" ]]; then
+				echo -e "\n"
+				cat "$full_path"
+			fi
 		fi
 	done
 
@@ -108,7 +134,11 @@ main() {
 	git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
 	git push origin "$BRANCH_NAME"
 
-	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION." --base "$BRANCH"
+	# Determine the base branch for the PR
+	BASE_BRANCH="${BRANCH:-$DEFAULT_BRANCH}"
+
+	echo "Creating a pull request with base branch $BASE_BRANCH."
+	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION." --base "$BASE_BRANCH"
 }
 
 main
