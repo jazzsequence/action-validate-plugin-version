@@ -113,6 +113,7 @@ main() {
 			# If we're dry-running, output the contents of the changed files.
 			if [[ "${DRY_RUN}" == "true" ]]; then
 				cat "$full_path"
+				echo -e "\n"
 			fi
 		fi
 	done
