@@ -112,8 +112,8 @@ main() {
 			git add "$full_path"
 			# If we're dry-running, output the contents of the changed files.
 			if [[ "${DRY_RUN}" == "true" ]]; then
-				cat "$full_path"
 				echo -e "\n"
+				cat "$full_path"
 			fi
 		fi
 	done
