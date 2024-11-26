@@ -110,6 +110,10 @@ main() {
 		full_path="${PLUGIN_PATH}/${trimmed_filename}"
 		if [[ -f "$full_path" ]]; then
 			git add "$full_path"
+			# If we're dry-running, output the contents of the changed files.
+			if [[ "${DRY_RUN}" == "true" ]]; then
+				cat "$full_path"
+			fi
 		fi
 	done
 
