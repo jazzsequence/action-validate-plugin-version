@@ -3,6 +3,16 @@ set -euo pipefail
 IFS=$'\n\t'
 
 main() {
+	# Determine the default branch
+	DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
+	echo "Default branch is $DEFAULT_BRANCH"
+
+	# Check out the specified branch if $BRANCH is set
+	if [[ -n "${BRANCH:-}" ]]; then
+		echo "Checking out branch $BRANCH"
+		git checkout "$BRANCH"
+	fi
+
 	# If $PLUGIN_PATH is defined, echo it.
 	if [[ -n "${PLUGIN_PATH:-}" ]]; then
 		PLUGIN_PATH=${WORKFLOW_PATH}/${PLUGIN_PATH}
@@ -108,7 +118,11 @@ main() {
 	git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
 	git push origin "$BRANCH_NAME"
 
-	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION." --base "$BRANCH"
+	# Determine the base branch for the PR
+	BASE_BRANCH="${BRANCH:-$DEFAULT_BRANCH}"
+
+	echo "Creating a pull request with base branch $BASE_BRANCH."
+	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION." --base "$BASE_BRANCH"
 }
 
 main
