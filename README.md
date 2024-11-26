@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Validate Plugin Version
         uses: jazzsequence/action-validate-plugin-version@v1
         with:
@@ -27,6 +29,10 @@ jobs:
           filenames: 'readme.txt,README.MD'
           branch: 'main'
 ```
+
+### Configuration
+
+Your `actions/checkout` action should include `fetch-depth`. `fetch-depth: 0` ensures that all branches are pulled which is _necessary_ for ensuring that the _correct branch_ is used to create the pull request against.
 
 ### Inputs
 
