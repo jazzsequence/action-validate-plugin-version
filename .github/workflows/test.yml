@@ -5,6 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Print current branch
+        run: |
+          echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
       - name: Validate Plugin Version
         uses: ./
         with:

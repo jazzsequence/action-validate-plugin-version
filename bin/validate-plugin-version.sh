@@ -7,15 +7,20 @@ main() {
 	DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
 	echo "Default branch is $DEFAULT_BRANCH"
 
-	# Check out the specified branch if $BRANCH is set
-	if [[ -n "${BRANCH:-}" ]]; then
+	# Check out the specified branch if $BRANCH is set and not already on it
+	if [[ -n "${BRANCH:-}" && "$(git rev-parse --abbrev-ref HEAD)" != "$BRANCH" ]]; then
+		echo "Checking if branch $BRANCH exists."
+		if ! git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+			echo "Error: Branch '$BRANCH' does not exist."
+			exit 1
+		fi
 		echo "Checking out branch $BRANCH"
 		git checkout "$BRANCH"
 	fi
 
 	# If $PLUGIN_PATH is defined, echo it.
 	if [[ -n "${PLUGIN_PATH:-}" ]]; then
-		PLUGIN_PATH=${WORKFLOW_PATH}/${PLUGIN_PATH}
+		 PLUGIN_PATH=${WORKFLOW_PATH}/${PLUGIN_PATH}
 		echo "Plugin path: $PLUGIN_PATH"
 	else
 		local PLUGIN_PATH
