@@ -49,7 +49,7 @@ The GitHub token to use for creating a PR. If not specified, the action will use
 A comma-separated list of filenames to check for the "Tested Up To" version. If not specified, the action will use `readme.txt` and `README.md`.
 
 #### `branch`
-The branch to create the PR against. If not specified, the action will use the branch it is running on (default branch for cron-triggered workflows).
+The branch to create the PR against. If not specified, the action will use the branch the workflow is running on (default branch for cron-triggered workflows).
 
 ## Permissions
 
