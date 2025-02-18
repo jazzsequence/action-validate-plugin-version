@@ -142,7 +142,7 @@ main() {
 	if [[ "${PR_STATUS:-}" != "open" ]]; then
 		PR_OPTIONS="${PR_OPTIONS} --draft"
 	fi
-	gh pr create $PR_OPTIONS
+	gh pr create "$PR_OPTIONS"
 }
 
 main
