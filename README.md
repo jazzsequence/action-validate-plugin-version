@@ -52,7 +52,7 @@ A comma-separated list of filenames to check for the "Tested Up To" version. If 
 The branch to create the PR against. If not specified, the action will use the branch the workflow is running on (default branch for cron-triggered workflows).
 
 #### `pr-status`
-The status to set on the PR. If not specified, the action will create a _draft_ PR.
+The status to set on the PR. If not specified, the action will create a _draft_ PR. Accepts `draft` or `open`.
 
 ## Permissions
 
