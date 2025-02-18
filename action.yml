@@ -26,7 +26,7 @@ inputs:
     required: false
     default: 'main'
   pr-status:
-    description: The status of the PR to create. Default is 'draft'.
+    description: The status of the PR to create. Default is 'draft'. Accepts 'draft' or 'open'.
     required: false
     default: 'draft'
 runs:
@@ -49,5 +49,6 @@ runs:
         GH_TOKEN: ${{ inputs.gh-token }}
         FILENAMES: ${{ inputs.filenames }}
         BRANCH: ${{ inputs.branch }}
+        PR_STATUS: ${{ inputs.pr-status }}
       run: bash ${{ github.action_path }}/bin/validate-plugin-version.sh
     
