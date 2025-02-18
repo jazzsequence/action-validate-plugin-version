@@ -51,6 +51,9 @@ A comma-separated list of filenames to check for the "Tested Up To" version. If 
 #### `branch`
 The branch to create the PR against. If not specified, the action will use the branch the workflow is running on (default branch for cron-triggered workflows).
 
+#### `pr-status`
+The status to set on the PR. If not specified, the action will create a _draft_ PR.
+
 ## Permissions
 
 The `write` permissions on `contents` and `pull-requests` are important. They are required for the action to commit the changes back to the repository and open a pull request. The only files affected by the action are files named `readme.txt`, `README.md` or those files matching the pattern (looking for "Tested Up To" in the file) that have been specified in the `filenames` input. 

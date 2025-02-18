@@ -25,6 +25,10 @@ inputs:
     description: The branch to use as the base for PRs and commit the changes back to.
     required: false
     default: 'main'
+  pr-status:
+    description: The status of the PR to create. Default is 'draft'.
+    required: false
+    default: 'draft'
 runs:
   using: composite
   steps:
