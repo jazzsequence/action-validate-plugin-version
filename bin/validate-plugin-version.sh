@@ -42,8 +42,9 @@ main(){
 	echo "Comparison result: $COMPARE_VERSIONS"
 	
 	if [[ $COMPARE_VERSIONS -eq -1 ]]; then
-	echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
-	echo "Updating readme.txt with new Tested up to version."
+		echo "Tested up to version ($TESTED_UP_TO) is less than current WordPress version ($CURRENT_WP_VERSION)."
+		echo "Updating readme.txt with new Tested up to version."
+	fi
 	
 	# Check if the script is running on macOS or Linux, and use the appropriate sed syntax
 	if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -63,30 +64,53 @@ main(){
 	fi
 
 	# Create a pull request with a dynamic branch name
-	BRANCH_PREFIX="update-tested-up-to-version-"
-	BRANCH_NAME="$BRANCH_PREFIX$(date +%Y%m%d%H%M%S)"
-	if git ls-remote --heads origin | grep -q "$BRANCH_PREFIX"; then
-		echo "A branch with prefix $BRANCH_PREFIX already exists. Exiting."
-		exit 1
-	fi
+    BRANCH_PREFIX="update-tested-up-to-version-"
+    BRANCH_NAME="$BRANCH_PREFIX$(date +%Y%m%d%H%M%S)"
 
-	# Bail before committing anything if we're dry-running.
-	if [[ "${DRY_RUN}" == "true" ]]; then
-		echo "Dry run enabled. Happy testing."
+    # All PRs open on the repo. Ones created by this action will have a known branch name.
+	local OPEN_PRS
+	OPEN_PRS=$(gh pr list --state open --json number,headRefName)
+
+	# Check for exact match and exit if found
+	local EXACT_MATCH_PR_ID
+	EXACT_MATCH_PR_ID=$(echo "$OPEN_PRS" | jq -r --arg exact "$BRANCH_NAME" '.[] | select(.headRefName == $exact) | .number')
+	if [[ -n "$EXACT_MATCH_PR_ID" ]]; then
+		echo "❌ A PR already exists for branch '$BRANCH_NAME': #$EXACT_MATCH_PR_ID"
 		exit 0
 	fi
+	
+    # Bail before committing anything or operation on other PRs if we're dry-running.
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        echo "Dry run enabled. Happy testing."
+        exit 0
+    fi
 
-	git config user.name "github-actions"
-	git config user.email "github-actions@github.com"
-	git checkout -b "$BRANCH_NAME"
-	git add "${PLUGIN_PATH}/readme.txt" "${PLUGIN_PATH}/README.md" || true
-	git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
-	git push origin "$BRANCH_NAME"
+    git config user.name "github-actions"
+    git config user.email "github-actions@github.com"
+    git checkout -b "$BRANCH_NAME"
+    git add "${PLUGIN_PATH}/readme.txt" "${PLUGIN_PATH}/README.md" || true
+    git commit -m "Update Tested Up To version to $CURRENT_WP_VERSION"
+    git push origin "$BRANCH_NAME"
 
-	gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in readme.txt (and README.md if applicable) to match the current WordPress version $CURRENT_WP_VERSION."
-	else
-	echo "Tested up to version matches or is greater than the current WordPress version. Check passed."
+    NEW_PR_URL=$(gh pr create --title "Update Tested Up To version to $CURRENT_WP_VERSION" --body "This pull request updates the \"Tested up to\" version in readme.txt (and README.md if applicable) to match the current WordPress version $CURRENT_WP_VERSION.")
+
+	if [[ "${CLOSE_OLD_PR:-}" != "true" ]]; then
+		exit 0
 	fi
+	
+	local PREFIX_MATCHES
+	PREFIX_MATCHES=$(echo "$OPEN_PRS" | jq -r --arg prefix "$BRANCH_PREFIX" '.[] | select(.headRefName | startswith($prefix)) | "\(.number) \(.headRefName)"')
+	while read -r pr_line; do
+		if [[ -z "$pr_line" ]]; then
+			continue
+		fi
+		local pr_number
+		pr_number=$(echo "$pr_line" | awk '{print $1}')
+		local pr_branch
+		pr_branch=$(echo "$pr_line" | awk '{print $2}')
+		echo "🛑 Closing old PR #$pr_number from branch '$pr_branch'"
+		gh pr close "$pr_number" --comment "Superseded by $NEW_PR_URL"
+	done <<< "$PREFIX_MATCHES"
 }
 
 main
