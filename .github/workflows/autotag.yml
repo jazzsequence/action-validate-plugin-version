@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Lint
         run: shellcheck bin/*.sh
       - name: Validate Plugin Version
@@ -21,6 +22,6 @@ jobs:
             plugin-path: '.github/workflows/fixtures/plugin-test/'
             dry-run: true		  
       - name: Tag & Release
-        uses: pantheon-systems/action-autotag@v0
+        uses: pantheon-systems/action-autotag@v1
         with:
-          gh-token: ${{ github.token }}
+          push-major-version-branch: true
