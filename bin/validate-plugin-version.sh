@@ -49,10 +49,19 @@ main() {
 	echo "Current WordPress Version: ${CURRENT_WP_VERSION}"
 
 	# Adjust version based on validation level
-	if [[ "${VALIDATION_LEVEL:-minor}" == "minor" ]]; then
-		CURRENT_WP_VERSION=$(echo "$CURRENT_WP_VERSION" | cut -d'.' -f1,2)
-		echo "Validation level is 'minor', using WordPress version: ${CURRENT_WP_VERSION}"
-	fi
+	case "${VALIDATION_LEVEL:-minor}" in
+		minor)
+			CURRENT_WP_VERSION=$(echo "$CURRENT_WP_VERSION" | cut -d'.' -f1,2)
+			echo "Validation level is 'minor', using WordPress version: ${CURRENT_WP_VERSION}"
+			;;
+		patch)
+			echo "Validation level is 'patch', using full WordPress version: ${CURRENT_WP_VERSION}"
+			;;
+		*)
+			echo "Error: Invalid validation-level specified: ${VALIDATION_LEVEL}. Must be 'minor' or 'patch'."
+			exit 1
+			;;
+	esac
 
 	# Split FILENAMES into an array
 	IFS=',' read -ra FILENAMES_ARRAY <<< "$FILENAMES"
