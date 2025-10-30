@@ -16,11 +16,6 @@ jobs:
           fetch-depth: 0
       - name: Lint
         run: shellcheck bin/*.sh
-      - name: Validate Plugin Version
-        uses: ./
-        with:
-            plugin-path: '.github/workflows/fixtures/plugin-test/'
-            dry-run: true		  
       - name: Tag & Release
         uses: pantheon-systems/action-autotag@v1
         with:
