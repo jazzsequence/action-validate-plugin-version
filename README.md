@@ -23,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Validate Plugin Version
-        uses: jazzsequence/action-validate-plugin-version@v1
+        uses: jazzsequence/action-validate-plugin-version@v2
         with:
           plugin-path: 'path/to/plugin-slug/'
           filenames: 'readme.txt,README.MD'
@@ -53,6 +53,12 @@ The branch to create the PR against. If not specified, the action will use the b
 
 #### `pr-status`
 The status to set on the PR. If not specified, the action will create a _draft_ PR. Accepts `draft` or `open`.
+
+#### `validation-level`
+The validation level to use. Accepts `patch` or `minor`. If not specified, the action will use `minor`.
+
+- `minor`: Compares the "Tested Up To" version against the current WordPress version using only the major and minor numbers (e.g., `6.1`), ignoring the patch number.
+- `patch`: Compares the full version including the patch number (e.g., `6.1.2`), requiring an exact match for validation.
 
 ## Permissions
 
