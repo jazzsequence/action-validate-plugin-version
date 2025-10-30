@@ -24,7 +24,6 @@ inputs:
   branch:
     description: The branch to use as the base for PRs and commit the changes back to.
     required: false
-    default: 'main'
   pr-status:
     description: The status of the PR to create. Default is 'draft'. Accepts 'draft' or 'open'.
     required: false
@@ -50,5 +49,6 @@ runs:
         FILENAMES: ${{ inputs.filenames }}
         BRANCH: ${{ inputs.branch }}
         PR_STATUS: ${{ inputs.pr-status }}
+        GITHUB_BASE_REF: ${{ github.base_ref }}
       run: bash ${{ github.action_path }}/bin/validate-plugin-version.sh
     
