@@ -57,6 +57,9 @@ The status to set on the PR. If not specified, the action will create a _draft_ 
 #### `validation-level`
 The validation level to use. Accepts `patch` or `minor`. If not specified, the action will use `minor`.
 
+- `minor`: Compares the "Tested Up To" version against the current WordPress version using only the major and minor numbers (e.g., `6.1`), ignoring the patch number.
+- `patch`: Compares the full version including the patch number (e.g., `6.1.2`), requiring an exact match for validation.
+
 ## Permissions
 
 The `write` permissions on `contents` and `pull-requests` are important. They are required for the action to commit the changes back to the repository and open a pull request. The only files affected by the action are files named `readme.txt`, `README.md` or those files matching the pattern (looking for "Tested Up To" in the file) that have been specified in the `filenames` input. 
