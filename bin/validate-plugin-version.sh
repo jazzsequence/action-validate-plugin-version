@@ -3,12 +3,15 @@ set -euo pipefail
 IFS=$'\n\t'
 
 main() {
-	# Determine the default branch
-	DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
+	if [[ -n "${GITHUB_BASE_REF:-}" ]]; then
+		DEFAULT_BRANCH="${GITHUB_BASE_REF}"
+	else
+		DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
+	fi
 	echo "Default branch is $DEFAULT_BRANCH"
 
 	# Check out the specified branch if $BRANCH is set and not already on it
-	if [[ -n "${BRANCH:-}" && "$(git rev-parse --abbrev-ref HEAD)" != "$BRANCH" ]]; then
+	if [[ -z "${GITHUB_BASE_REF:-}" && -n "${BRANCH:-}" && "$(git rev-parse --abbrev-ref HEAD)" != "$BRANCH" ]]; then
 		echo "Checking if branch $BRANCH exists."
 		if ! git show-ref --verify --quiet "refs/heads/$BRANCH"; then
 			if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
