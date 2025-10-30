@@ -3,6 +3,10 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        validation-level: [minor, patch]
+    name: Test Validation Level ${{ matrix.validation-level }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -12,3 +16,4 @@ jobs:
         with:
             plugin-path: '.github/workflows/fixtures/plugin-test/'
             dry-run: true
+            validation-level: ${{ matrix.validation-level }}
