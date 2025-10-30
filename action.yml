@@ -28,6 +28,10 @@ inputs:
     description: The status of the PR to create. Default is 'draft'. Accepts 'draft' or 'open'.
     required: false
     default: 'draft'
+  validation-level:
+    description: The validation level to use. Accepts 'patch' or 'minor'.
+    required: false
+    default: 'minor'
 runs:
   using: composite
   steps:
@@ -38,7 +42,7 @@ runs:
         echo "Current working directory:"
         pwd
         echo "Contents of action directory (looking for bin/validate-plugin-version.sh):"
-        ls -R    
+        ls -R
     - name: Validate Plugin Tested Up To Version
       shell: bash
       env:
@@ -50,5 +54,6 @@ runs:
         BRANCH: ${{ inputs.branch }}
         PR_STATUS: ${{ inputs.pr-status }}
         GITHUB_BASE_REF: ${{ github.base_ref }}
+        VALIDATION_LEVEL: ${{ inputs.validation-level }}
       run: bash ${{ github.action_path }}/bin/validate-plugin-version.sh
     

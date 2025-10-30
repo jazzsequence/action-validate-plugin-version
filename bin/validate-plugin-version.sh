@@ -48,6 +48,12 @@ main() {
 	CURRENT_WP_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].current')
 	echo "Current WordPress Version: ${CURRENT_WP_VERSION}"
 
+	# Adjust version based on validation level
+	if [[ "${VALIDATION_LEVEL:-minor}" == "minor" ]]; then
+		CURRENT_WP_VERSION=$(echo "$CURRENT_WP_VERSION" | cut -d'.' -f1,2)
+		echo "Validation level is 'minor', using WordPress version: ${CURRENT_WP_VERSION}"
+	fi
+
 	# Split FILENAMES into an array
 	IFS=',' read -ra FILENAMES_ARRAY <<< "$FILENAMES"
 
