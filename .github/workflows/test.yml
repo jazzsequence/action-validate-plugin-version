@@ -3,17 +3,26 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        validation-level: [minor, patch]
-    name: Test Validation Level ${{ matrix.validation-level }}
+    name: Test Validation Level
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Validate Plugin Version
+      - name: Validate Plugin Version (Patch - Fail)
         uses: ./
         with:
-            plugin-path: '.github/workflows/fixtures/plugin-test/'
+            plugin-path: '.github/workflows/fixtures/plugin-test-patch-fail/'
             dry-run: true
-            validation-level: ${{ matrix.validation-level }}
+            validation-level: patch
+      - name: Validate Plugin Version (Minor - Fail)
+        uses: ./
+        with:
+            plugin-path: '.github/workflows/fixtures/plugin-test-minor-fail/'
+            dry-run: true
+            validation-level: minor
+      - name: Validate Plugin Version (Minor - Pass)
+        uses: ./
+        with:
+            plugin-path: '.github/workflows/fixtures/plugin-test-minor-pass/'
+            dry-run: true
+            validation-level: minor            
