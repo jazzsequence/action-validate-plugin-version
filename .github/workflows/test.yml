@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Test Validation Level
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Validate Plugin Version (Patch - Fail)
