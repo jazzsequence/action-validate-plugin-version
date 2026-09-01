@@ -109,13 +109,21 @@ main() {
 
 	# Create a pull request with a dynamic branch name
 	BRANCH_PREFIX="update-tested-up-to-version-"
-	BRANCH_NAME="$BRANCH_PREFIX$(date +%Y%m%d%H%M%S)"
+	BRANCH_NAME="${BRANCH_PREFIX}$(date +%Y%m%d%H%M%S)"
 
-	echo "Checking if a branch with prefix $BRANCH_PREFIX already exists."
-	if git ls-remote --heads origin | grep -q "$BRANCH_PREFIX"; then
-		echo "A branch with prefix $BRANCH_PREFIX already exists. Exiting."
+
+    # All PRs open on the repo. Ones created by this action will have a known branch name.
+	local OPEN_PRS
+	OPEN_PRS=$(gh pr list --state open --json number,headRefName)
+
+	# Check for exact match and exit if found
+	local EXACT_MATCH_PR_ID
+	EXACT_MATCH_PR_ID=$(echo "$OPEN_PRS" | jq -r --arg exact "$BRANCH_NAME" '.[] | select(.headRefName == $exact) | .number')
+	if [[ -n "$EXACT_MATCH_PR_ID" ]]; then
+		echo "❌ A PR already exists for branch '$BRANCH_NAME': #$EXACT_MATCH_PR_ID"
 		exit 0
 	fi
+
 
 	echo "Creating a new branch $BRANCH_NAME and pushing changes."
 	git config user.name "github-actions"
@@ -156,11 +164,31 @@ main() {
 	BASE_BRANCH="${BRANCH:-$DEFAULT_BRANCH}"
 
 	echo "Creating a pull request with base branch $BASE_BRANCH."
-	local PR_OPTIONS="--title \"Update Tested Up To version to $CURRENT_WP_VERSION\" --body \"This pull request updates the 'Tested up to' version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION.\" --base \"$BASE_BRANCH\""
+	PR_OPTIONS=(
+		--title "Update Tested Up To version to $CURRENT_WP_VERSION"
+		--body "This pull request updates the 'Tested up to' version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION."
+		--base "$BASE_BRANCH"
+	)
+
 	if [[ "${PR_STATUS:-}" != "open" ]]; then
-		PR_OPTIONS="${PR_OPTIONS} --draft"
+		PR_OPTIONS+=(--draft)
 	fi
-	gh pr create "$PR_OPTIONS"
+
+	NEW_PR_URL=$(gh pr create "${PR_OPTIONS[@]}")
+
+	local PREFIX_MATCHES
+	PREFIX_MATCHES=$(echo "$OPEN_PRS" | jq -r --arg prefix "$BRANCH_PREFIX" '.[] | select(.headRefName | startswith($prefix)) | "\(.number) \(.headRefName)"')
+	while read -r pr_line; do
+		if [[ -z "$pr_line" ]]; then
+			continue
+		fi
+		local pr_number
+		pr_number=$(echo "$pr_line" | awk '{print $1}')
+		local pr_branch
+		pr_branch=$(echo "$pr_line" | awk '{print $2}')
+		echo "🛑 Closing old PR #$pr_number from branch '$pr_branch'"
+		gh pr close "$pr_number" --comment "Superseded by $NEW_PR_URL"
+	done <<< "$PREFIX_MATCHES"
 }
 
 main
