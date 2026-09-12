@@ -156,11 +156,17 @@ main() {
 	BASE_BRANCH="${BRANCH:-$DEFAULT_BRANCH}"
 
 	echo "Creating a pull request with base branch $BASE_BRANCH."
-	local PR_OPTIONS="--title \"Update Tested Up To version to $CURRENT_WP_VERSION\" --body \"This pull request updates the 'Tested up to' version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION.\" --base \"$BASE_BRANCH\""
+	# Build the options as an array. A single quoted string would reach gh as one
+	# argv element, which it parses as one unknown flag rather than as options.
+	local -a PR_ARGS=(
+		--title "Update Tested Up To version to $CURRENT_WP_VERSION"
+		--body "This pull request updates the 'Tested up to' version in specified files (${FILENAMES}) to match the current WordPress version $CURRENT_WP_VERSION."
+		--base "$BASE_BRANCH"
+	)
 	if [[ "${PR_STATUS:-}" != "open" ]]; then
-		PR_OPTIONS="${PR_OPTIONS} --draft"
+		PR_ARGS+=( --draft )
 	fi
-	gh pr create "$PR_OPTIONS"
+	gh pr create "${PR_ARGS[@]}"
 }
 
 main
